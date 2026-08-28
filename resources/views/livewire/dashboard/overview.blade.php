@@ -83,6 +83,57 @@
             </div>
         </div>
 
+        <!-- Leadership Board -->
+        <div class="bg-surface border border-line rounded-xl overflow-hidden shadow-sm">
+            <div class="p-5 border-b border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <h3 class="text-sm font-bold text-ink">Leadership Board</h3>
+                    <p class="text-[11px] text-ink-muted mt-1">Assigned coordinators and project leaders across the command structure.</p>
+                </div>
+                <a href="{{ route('admin.regional-command') }}" class="text-xs text-teal font-bold hover:underline">Manage Assignments &rarr;</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[620px] text-left text-xs">
+                    <thead class="bg-canvas text-ink-muted border-b border-line uppercase font-mono font-semibold tracking-wider">
+                        <tr>
+                            <th class="px-5 py-3">Leader</th>
+                            <th class="px-5 py-3">Role</th>
+                            <th class="px-5 py-3">Assigned Area</th>
+                            <th class="px-5 py-3 text-right">Coverage</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line">
+                        @forelse($leadershipBoard as $leader)
+                            <tr class="hover:bg-surface-raised/50 transition">
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center gap-3">
+                                        @if($leader['photo'])
+                                            <img src="{{ Storage::disk('public')->url($leader['photo']) }}" class="w-8 h-8 rounded-full object-cover" alt="{{ $leader['name'] }}">
+                                        @else
+                                            <div class="w-8 h-8 rounded-full bg-ochre-soft border border-ochre-dim flex items-center justify-center text-[10px] font-bold text-ochre">
+                                                {{ strtoupper(substr($leader['name'], 0, 2)) }}
+                                            </div>
+                                        @endif
+                                        <span class="font-semibold text-ink">{{ $leader['name'] }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-3.5">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-teal-soft text-teal border border-teal-dim">{{ $leader['role'] }}</span>
+                                </td>
+                                <td class="px-5 py-3.5 text-ink-muted">{{ $leader['scope'] }}</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-ink">{{ $leader['coverage'] }} {{ $leader['unit'] }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-5 py-8 text-center text-ink-muted">No coordinators or project leaders have been assigned yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Charts Row 1: Donations Trend + Project Status Breakdown -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 bg-surface border border-line rounded-xl p-5 shadow-sm">

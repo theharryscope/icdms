@@ -10,6 +10,7 @@ use App\Models\Kpi;
 use App\Models\Program;
 use App\Models\User;
 use App\Models\Donation;
+use App\Models\Zone;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -78,6 +79,59 @@ class Overview extends Component
             ->orderByDesc('total')
             ->get();
 
+        $leadershipBoard = collect();
+        Zone::with(['coordinator', 'states.coordinator', 'states.localGovernments.lgaCoordinator', 'states.localGovernments.projectLeader'])
+            ->get()
+            ->each(function ($zone) use ($leadershipBoard) {
+                if ($zone->coordinator) {
+                    $leadershipBoard->push([
+                        'name' => $zone->coordinator->name,
+                        'photo' => $zone->coordinator->profile_photo_path,
+                        'role' => 'Zonal Coordinator',
+                        'scope' => $zone->name,
+                        'coverage' => $zone->states->count(),
+                        'unit' => 'states',
+                    ]);
+                }
+
+                $zone->states->each(function ($state) use ($leadershipBoard, $zone) {
+                    if ($state->coordinator) {
+                        $leadershipBoard->push([
+                            'name' => $state->coordinator->name,
+                            'photo' => $state->coordinator->profile_photo_path,
+                            'role' => 'State Coordinator',
+                            'scope' => $state->name . ' · ' . $zone->name,
+                            'coverage' => $state->localGovernments->count(),
+                            'unit' => 'LGAs',
+                        ]);
+                    }
+
+                    $state->localGovernments->each(function ($lga) use ($leadershipBoard, $state) {
+                        if ($lga->lgaCoordinator) {
+                            $leadershipBoard->push([
+                                'name' => $lga->lgaCoordinator->name,
+                                'photo' => $lga->lgaCoordinator->profile_photo_path,
+                                'role' => 'LGA Coordinator',
+                                'scope' => $lga->name . ' · ' . $state->name,
+                                'coverage' => 1,
+                                'unit' => 'LGA',
+                            ]);
+                        }
+
+                        if ($lga->projectLeader) {
+                            $leadershipBoard->push([
+                                'name' => $lga->projectLeader->name,
+                                'photo' => $lga->projectLeader->profile_photo_path,
+                                'role' => 'Project Leader',
+                                'scope' => $lga->name . ' · ' . $state->name,
+                                'coverage' => 1,
+                                'unit' => 'LGA project',
+                            ]);
+                        }
+                    });
+                });
+            });
+
         return view('livewire.dashboard.overview', [
             'activeProjects' => (clone $projectQuery)->where('status', 'in_progress')->count(),
             'totalProjects' => (clone $projectQuery)->count(),
@@ -102,6 +156,7 @@ class Overview extends Component
             'programBudgetData' => $programBudgetData,
             'programExpenditureData' => $programExpenditureData,
             'categoryBreakdown' => $categoryBreakdown,
+            'leadershipBoard' => $leadershipBoard->sortByDesc('coverage')->values(),
         ])->layout('layouts.app');
     }
 }
