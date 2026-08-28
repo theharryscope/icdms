@@ -126,6 +126,37 @@
 
         </div>
 
+        <!-- Bulk LGA Import -->
+        <form wire:submit.prevent="importLgas" class="bg-surface border border-line rounded-2xl p-5 space-y-4">
+            <div>
+                <h3 class="text-sm font-bold text-ink uppercase tracking-wider text-teal">Bulk Import Local Government Areas</h3>
+                <p class="text-[11px] text-ink-muted mt-1">Select a state, then upload a CSV or text file with one LGA name per line. A CSV with a <span class="font-mono">name</span> column is also supported.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div>
+                    <label class="block text-[11px] font-bold text-ink-muted uppercase mb-1">Target State</label>
+                    <select wire:model="selected_state_id" class="w-full bg-canvas border border-line rounded-lg px-3 py-2 text-xs text-ink focus:outline-none focus:border-teal">
+                        <option value="">Select State</option>
+                        @foreach($allStates as $s)
+                            <option value="{{ $s->id }}">{{ $s->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('selected_state_id') <span class="text-red-400 text-[10px]">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-ink-muted uppercase mb-1">CSV / Text File</label>
+                    <input type="file" wire:model="lga_import_file" accept=".csv,.txt,text/csv,text/plain" class="w-full bg-canvas border border-line rounded-lg px-3 py-2 text-xs text-ink-muted focus:outline-none">
+                    @error('lga_import_file') <span class="text-red-400 text-[10px]">{{ $message }}</span> @enderror
+                </div>
+            </div>
+
+            <button type="submit" class="w-full md:w-auto px-5 py-2 bg-teal hover:bg-teal/90 text-canvas font-semibold rounded-lg text-xs shadow-lg shadow-teal/10 transition" wire:loading.attr="disabled" wire:target="importLgas,lga_import_file">
+                Import LGAs to Selected State
+            </button>
+        </form>
+
         <!-- Hierarchical Tree Overview -->
         <div class="bg-surface border border-line rounded-2xl p-6 space-y-4">
             <h3 class="text-sm font-bold text-ink uppercase tracking-wider">Active Regional Command Hierarchy</h3>

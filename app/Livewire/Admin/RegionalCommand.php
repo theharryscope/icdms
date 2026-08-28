@@ -3,13 +3,17 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Zone;
 use App\Models\ZoneState;
 use App\Models\LocalGovernment;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class RegionalCommand extends Component
 {
+    use WithFileUploads;
+
     // Form Inputs - Zone
     public $zone_name, $zone_code, $zone_description, $zonal_coordinator_id;
 
@@ -18,6 +22,7 @@ class RegionalCommand extends Component
 
     // Form Inputs - LGA
     public $selected_state_id, $lga_name, $lga_coordinator_id, $project_leader_id;
+    public $lga_import_file;
 
     protected $rules = [
         'zone_name' => 'required|string|max:255',
@@ -109,6 +114,59 @@ class RegionalCommand extends Component
 
         $this->reset(['lga_name', 'lga_coordinator_id', 'project_leader_id']);
         session()->flash('message', 'LGA registered with LGA Coordinator and Project Leader assigned.');
+    }
+
+    public function importLgas(): void
+    {
+        $this->validate([
+            'selected_state_id' => 'required|exists:zone_states,id',
+            'lga_import_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        $contents = file_get_contents($this->lga_import_file->getRealPath());
+        $rows = preg_split('/\r\n|\r|\n/', $contents);
+        $names = [];
+
+        foreach ($rows as $index => $row) {
+            $columns = str_getcsv($row);
+            $value = count($columns) > 1
+                ? ($columns[array_search('name', array_map(fn ($column) => Str::lower(trim($column)), $columns)) ?: 0] ?? '')
+                : ($columns[0] ?? '');
+            $value = trim($value, " \t\n\r\0\x0B\xEF\xBB\xBF");
+
+            if ($index === 0 && Str::lower($value) === 'name') {
+                continue;
+            }
+
+            if ($value !== '') {
+                $names[Str::lower($value)] = $value;
+            }
+        }
+
+        if (empty($names)) {
+            $this->addError('lga_import_file', 'No LGA names were found. Use one name per line or a CSV with a name column.');
+            return;
+        }
+
+        $existingNames = LocalGovernment::where('zone_state_id', $this->selected_state_id)
+            ->pluck('name')
+            ->map(fn ($name) => Str::lower(trim($name)))
+            ->all();
+
+        $existingNames = array_fill_keys($existingNames, true);
+        $newNames = array_diff_key($names, $existingNames);
+
+        foreach ($newNames as $name) {
+            LocalGovernment::create([
+                'zone_state_id' => $this->selected_state_id,
+                'name' => $name,
+            ]);
+        }
+
+        $created = count($newNames);
+        $skipped = count($names) - $created;
+        $this->reset('lga_import_file');
+        session()->flash('message', "LGA import complete: {$created} created, {$skipped} duplicate(s) skipped.");
     }
 
     public function render()
