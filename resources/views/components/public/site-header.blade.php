@@ -31,6 +31,7 @@
             <a href="{{ route('landing') }}#impact" class="hover:text-ochre transition">Impact</a>
             <a href="{{ route('landing') }}#roles" class="hover:text-ochre transition">Join Us</a>
             <a href="{{ route('public.blog') }}" class="hover:text-ochre transition">Blog</a>
+            <a href="{{ route('public.gallery') }}" class="hover:text-ochre transition">Gallery</a>
             @foreach ($headerPages as $headerPage)
                 <a href="{{ route('public.page', $headerPage->slug) }}" class="hover:text-ochre transition">{{ $headerPage->title }}</a>
             @endforeach
@@ -82,6 +83,7 @@
             <a href="{{ route('landing') }}#impact" @click="mobileOpen = false" class="block py-2.5 hover:text-ochre transition">Impact</a>
             <a href="{{ route('landing') }}#roles" @click="mobileOpen = false" class="block py-2.5 hover:text-ochre transition">Join Us</a>
             <a href="{{ route('public.blog') }}" @click="mobileOpen = false" class="block py-2.5 hover:text-ochre transition">Blog</a>
+            <a href="{{ route('public.gallery') }}" @click="mobileOpen = false" class="block py-2.5 hover:text-ochre transition">Gallery</a>
             @foreach ($headerPages as $headerPage)
                 <a href="{{ route('public.page', $headerPage->slug) }}" @click="mobileOpen = false" class="block py-2.5 hover:text-ochre transition">{{ $headerPage->title }}</a>
             @endforeach

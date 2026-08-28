@@ -37,6 +37,9 @@ use App\Livewire\Public\ShowPage;
 use App\Livewire\Admin\BlogManagement;
 use App\Livewire\Public\BlogIndex;
 use App\Livewire\Public\BlogShow;
+use App\Livewire\Admin\GalleryManagement;
+use App\Livewire\Public\GalleryIndex;
+use App\Livewire\Public\GalleryShow;
 /*
 |--------------------------------------------------------------------------
 | Public Foundation Website Routes
@@ -54,6 +57,8 @@ Route::get('/page/{page:slug}', ShowPage::class)->name('public.page');
 // Public Blog
 Route::get('/blog', BlogIndex::class)->name('public.blog');
 Route::get('/blog/{post:slug}', BlogShow::class)->name('public.blog.show');
+Route::get('/gallery', GalleryIndex::class)->name('public.gallery');
+Route::get('/gallery/{album:slug}', GalleryShow::class)->name('public.gallery.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
@@ -108,6 +113,7 @@ Route::prefix('icdms')->middleware(['auth'])->group(function () {
         Route::get('/settings/site', SiteSettings::class)->name('admin.site-settings');
         Route::get('/pages', PageManagement::class)->name('admin.pages');
         Route::get('/blog', BlogManagement::class)->name('admin.blog');
+        Route::get('/gallery', GalleryManagement::class)->name('admin.gallery');
     });
 
     // Dedicated Coordinator Dashboard

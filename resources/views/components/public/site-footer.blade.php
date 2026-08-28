@@ -29,6 +29,7 @@
                 <li><a href="{{ route('landing') }}#programs" class="hover:text-ochre transition">Programs</a></li>
                 <li><a href="{{ route('landing') }}#impact" class="hover:text-ochre transition">Impact</a></li>
                 <li><a href="{{ route('public.blog') }}" class="hover:text-ochre transition">Blog</a></li>
+                <li><a href="{{ route('public.gallery') }}" class="hover:text-ochre transition">Gallery</a></li>
                 @foreach ($footerPages as $footerPage)
                     <li><a href="{{ route('public.page', $footerPage->slug) }}" class="hover:text-ochre transition">{{ $footerPage->title }}</a></li>
                 @endforeach

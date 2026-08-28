@@ -12,6 +12,7 @@ use App\Models\Zone;
 use App\Models\ZoneState;
 use App\Models\LocalGovernment;
 use App\Models\Post;
+use App\Models\GalleryAlbum;
 
 class LandingPage extends Component
 {
@@ -52,6 +53,7 @@ class LandingPage extends Component
             'caseFileKpi' => $caseFileKpi,
 
             'latestPosts' => Post::published()->latestFirst()->take(3)->get(),
+            'latestGalleries' => GalleryAlbum::with('images')->published()->latestFirst()->take(3)->get(),
 
             'title' => 'InnoTech Future Foundation — Digital Skills, Regional Command, Verified Impact',
             'metaDescription' => 'InnoTech Future Foundation runs digital capacity training, community infrastructure and regional leadership programs across Nigeria — every project, KPI and donation tracked in the open.',

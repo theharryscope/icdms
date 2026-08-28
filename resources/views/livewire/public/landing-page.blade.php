@@ -397,6 +397,37 @@
         </section>
     @endif
 
+    <!-- LATEST GALLERY -->
+    @if($latestGalleries->isNotEmpty())
+        <section class="py-24 border-b border-line">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+                    <div>
+                        <span class="text-[11px] font-mono font-semibold uppercase tracking-widest text-teal">Gallery</span>
+                        <h2 class="text-3xl font-display font-bold text-ink tracking-tight mt-3">Moments from the work</h2>
+                    </div>
+                    <a href="{{ route('public.gallery') }}" class="text-xs font-bold text-teal hover:text-teal/80">View full gallery &rarr;</a>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($latestGalleries as $gallery)
+                        <a href="{{ route('public.gallery.show', $gallery->slug) }}" class="group bg-surface border border-line rounded-xl overflow-hidden hover:border-teal-dim transition">
+                            <div class="aspect-[4/3] bg-canvas grid grid-cols-2 gap-0.5 overflow-hidden">
+                                @foreach($gallery->images->take(4) as $image)
+                                    <img src="{{ $image->image_url }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" alt="{{ $image->caption ?: $gallery->title }}">
+                                @endforeach
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-center justify-between gap-3"><span class="text-[10px] font-mono font-semibold uppercase tracking-widest text-teal">{{ $gallery->category }}</span><span class="text-[10px] text-ink-muted font-mono">{{ $gallery->images->count() }} photos</span></div>
+                                <h3 class="text-base font-display font-bold text-ink mt-2 group-hover:text-teal transition">{{ $gallery->title }}</h3>
+                                @if($gallery->description)<p class="text-xs text-ink-muted leading-relaxed mt-2 line-clamp-2">{{ $gallery->description }}</p>@endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
     <!-- ROLES / JOIN -->
     <section id="roles" class="py-24">
         <div class="max-w-7xl mx-auto px-6">

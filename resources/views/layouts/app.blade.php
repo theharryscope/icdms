@@ -177,6 +177,11 @@
                             <svg class="w-5 h-5 {{ request()->routeIs('admin.blog') ? 'text-ochre' : 'text-ink-muted group-hover:text-ochre' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 8h16M4 4h16v16H4V4z"/></svg>
                             <span>Blog</span>
                         </a>
+
+                        <a href="{{ route('admin.gallery') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg {{ request()->routeIs('admin.gallery') ? 'text-ochre bg-ochre-soft border border-ochre-dim font-semibold' : 'text-ink-muted hover:bg-surface-raised' }} transition group">
+                            <svg class="w-5 h-5 {{ request()->routeIs('admin.gallery') ? 'text-ochre' : 'text-ink-muted group-hover:text-ochre' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 8h16M4 4h16v16H4V4z"/></svg>
+                            <span>Gallery</span>
+                        </a>
                     @endhasrole
 
                     <a href="{{ route('beneficiaries.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg {{ request()->routeIs('beneficiaries.*') ? 'text-ochre bg-ochre-soft border border-ochre-dim font-semibold' : 'text-ink-muted hover:bg-surface-raised' }} transition group">
