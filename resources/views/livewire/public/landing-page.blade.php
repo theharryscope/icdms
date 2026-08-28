@@ -58,6 +58,22 @@
 
                 <!-- Right: Live Case File -->
                 <div class="lg:col-span-6">
+                    @php
+                        $heroGallery = $latestGalleries->first();
+                        $heroImage = $heroGallery?->images->first();
+                    @endphp
+                    @if($heroImage)
+                        <a href="{{ route('public.gallery.show', $heroGallery->slug) }}" class="group block max-w-md mx-auto lg:ml-auto mb-8 relative overflow-hidden rounded-xl border border-line shadow-2xl shadow-black/30">
+                            <div class="aspect-[16/10] bg-surface overflow-hidden">
+                                <img src="{{ $heroImage->image_url }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $heroImage->caption ?: $heroGallery->title }}">
+                            </div>
+                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent px-5 pt-12 pb-4">
+                                <span class="text-[10px] font-mono font-semibold uppercase tracking-widest text-ochre">Field Snapshot · {{ $heroGallery->category }}</span>
+                                <span class="block text-sm font-display font-bold text-white mt-1">{{ $heroGallery->title }}</span>
+                                <span class="block text-[11px] text-white/70 mt-1">View the full gallery &rarr;</span>
+                            </div>
+                        </a>
+                    @endif
                     @if($caseFileProject)
                         @php
                             $kpiPct = $caseFileKpi && $caseFileKpi->target > 0
