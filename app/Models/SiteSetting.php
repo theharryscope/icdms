@@ -50,11 +50,11 @@ class SiteSetting extends Model
 
     public function getLogoUrlAttribute(): ?string
     {
-        return $this->logo_path ? Storage::disk('site_uploads')->url($this->logo_path) : null;
+        return $this->logo_path ? url('uploads/site/' . ltrim($this->logo_path, '/')) : null;
     }
 
     public function getFaviconUrlAttribute(): ?string
     {
-        return $this->favicon_path ? Storage::disk('site_uploads')->url($this->favicon_path) : null;
+        return $this->favicon_path ? url('uploads/site/' . ltrim($this->favicon_path, '/')) : null;
     }
 }
