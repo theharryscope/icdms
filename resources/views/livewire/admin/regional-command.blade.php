@@ -187,9 +187,20 @@
                                 <span class="text-[10px] text-teal font-mono font-bold">{{ $zone->code }} ZONE</span>
                                 <h4 class="text-sm font-bold text-ink">{{ $zone->name }}</h4>
                             </div>
-                            <span class="text-xs text-ink-muted">
-                                Zonal Coordinator: <strong class="text-teal">{{ $zone->coordinator->name ?? 'Unassigned' }}</strong>
-                            </span>
+                            <div class="flex flex-col items-end gap-2">
+                                <span class="text-xs text-ink-muted">
+                                    Zonal Coordinator: <strong class="text-teal">{{ $zone->coordinator->name ?? 'Unassigned' }}</strong>
+                                </span>
+                                <form wire:submit.prevent="assignZoneCoordinator({{ $zone->id }})" class="flex items-center gap-2">
+                                    <select wire:model="zoneAssignments.{{ $zone->id }}" class="bg-surface border border-line rounded px-2 py-1 text-[10px] text-ink focus:outline-none focus:border-ochre">
+                                        <option value="">{{ $zone->coordinator ? 'Change coordinator' : 'Assign coordinator' }}</option>
+                                        @foreach($staffUsers as $staff)
+                                            <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <button type="submit" class="text-[10px] font-bold text-ochre hover:text-ochre/80">Save</button>
+                                </form>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4 border-l-2 border-teal">
@@ -197,19 +208,47 @@
                                 <div class="p-3 rounded-lg bg-surface border border-line space-y-2">
                                     <div class="flex justify-between items-center">
                                         <span class="text-xs font-bold text-teal">{{ $state->name }}</span>
-                                        <span class="text-[11px] text-ink-muted">
-                                            State Coord: <strong class="text-teal">{{ $state->coordinator->name ?? 'Unassigned' }}</strong>
-                                        </span>
+                                        <div class="flex flex-col items-end gap-1.5">
+                                            <span class="text-[11px] text-ink-muted">
+                                                State Coord: <strong class="text-teal">{{ $state->coordinator->name ?? 'Unassigned' }}</strong>
+                                            </span>
+                                            <form wire:submit.prevent="assignStateCoordinator({{ $state->id }})" class="flex items-center gap-1.5">
+                                                <select wire:model="stateAssignments.{{ $state->id }}" class="bg-canvas border border-line rounded px-1.5 py-1 text-[10px] text-ink focus:outline-none focus:border-ochre">
+                                                    <option value="">{{ $state->coordinator ? 'Change' : 'Assign' }}</option>
+                                                    @foreach($staffUsers as $staff)
+                                                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="submit" class="text-[10px] font-bold text-ochre hover:text-ochre/80">Save</button>
+                                            </form>
+                                        </div>
                                     </div>
 
                                     <div class="space-y-1 text-[11px]">
                                         @foreach($state->localGovernments as $lga)
                                             <div class="flex justify-between items-center py-1 border-t border-line/50">
                                                 <span class="text-ink-muted font-medium">{{ $lga->name }} LGA</span>
-                                                <div class="space-x-2 text-[10px]">
-                                                    <span class="text-ochre">Coord: {{ $lga->lgaCoordinator->name ?? 'None' }}</span>
-                                                    <span class="text-ink-muted">|</span>
-                                                    <span class="text-teal">Leader: {{ $lga->projectLeader->name ?? 'None' }}</span>
+                                                <div class="flex flex-col items-end gap-1 text-[10px]">
+                                                    <form wire:submit.prevent="assignLgaCoordinator({{ $lga->id }})" class="flex items-center gap-1">
+                                                        <span class="text-ochre">Coord: {{ $lga->lgaCoordinator->name ?? 'None' }}</span>
+                                                        <select wire:model="lgaCoordinatorAssignments.{{ $lga->id }}" class="bg-canvas border border-line rounded px-1 py-0.5 text-[9px] text-ink focus:outline-none focus:border-ochre">
+                                                            <option value="">{{ $lga->lgaCoordinator ? 'Change' : 'Assign' }}</option>
+                                                            @foreach($staffUsers as $staff)
+                                                                <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <button type="submit" class="font-bold text-ochre hover:text-ochre/80">Save</button>
+                                                    </form>
+                                                    <form wire:submit.prevent="assignProjectLeader({{ $lga->id }})" class="flex items-center gap-1">
+                                                        <span class="text-teal">Leader: {{ $lga->projectLeader->name ?? 'None' }}</span>
+                                                        <select wire:model="projectLeaderAssignments.{{ $lga->id }}" class="bg-canvas border border-line rounded px-1 py-0.5 text-[9px] text-ink focus:outline-none focus:border-teal">
+                                                            <option value="">{{ $lga->projectLeader ? 'Change' : 'Assign' }}</option>
+                                                            @foreach($staffUsers as $staff)
+                                                                <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <button type="submit" class="font-bold text-teal hover:text-teal/80">Save</button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         @endforeach

@@ -24,6 +24,10 @@ class RegionalCommand extends Component
     public $selected_state_id, $lga_name, $lga_coordinator_id, $project_leader_id;
     public $lga_import_file;
     public string $search = '';
+    public array $zoneAssignments = [];
+    public array $stateAssignments = [];
+    public array $lgaCoordinatorAssignments = [];
+    public array $projectLeaderAssignments = [];
 
     protected $rules = [
         'zone_name' => 'required|string|max:255',
@@ -175,6 +179,80 @@ class RegionalCommand extends Component
         $this->search = '';
     }
 
+    public function assignZoneCoordinator(int $zoneId): void
+    {
+        $userId = $this->zoneAssignments[$zoneId] ?? null;
+        $this->validateAssignmentUser($userId);
+
+        $zone = Zone::findOrFail($zoneId);
+        $user = User::findOrFail($userId);
+        $zone->update(['zonal_coordinator_id' => $user->id]);
+        $user->update(['zone_id' => $zone->id]);
+        $user->assignRole('Zonal Coordinator');
+
+        session()->flash('message', "{$user->name} assigned as coordinator for {$zone->name}.");
+    }
+
+    public function assignStateCoordinator(int $stateId): void
+    {
+        $userId = $this->stateAssignments[$stateId] ?? null;
+        $this->validateAssignmentUser($userId);
+
+        $state = ZoneState::findOrFail($stateId);
+        $user = User::findOrFail($userId);
+        $state->update(['state_coordinator_id' => $user->id]);
+        $user->update([
+            'zone_id' => $state->zone_id,
+            'zone_state_id' => $state->id,
+        ]);
+        $user->assignRole('State Coordinator');
+
+        session()->flash('message', "{$user->name} assigned as coordinator for {$state->name}.");
+    }
+
+    public function assignLgaCoordinator(int $lgaId): void
+    {
+        $userId = $this->lgaCoordinatorAssignments[$lgaId] ?? null;
+        $this->validateAssignmentUser($userId);
+
+        $lga = LocalGovernment::with('state')->findOrFail($lgaId);
+        $user = User::findOrFail($userId);
+        $lga->update(['lga_coordinator_id' => $user->id]);
+        $user->update([
+            'zone_id' => $lga->state->zone_id,
+            'zone_state_id' => $lga->zone_state_id,
+            'local_government_id' => $lga->id,
+        ]);
+        $user->assignRole('LGA Coordinator');
+
+        session()->flash('message', "{$user->name} assigned as coordinator for {$lga->name} LGA.");
+    }
+
+    public function assignProjectLeader(int $lgaId): void
+    {
+        $userId = $this->projectLeaderAssignments[$lgaId] ?? null;
+        $this->validateAssignmentUser($userId);
+
+        $lga = LocalGovernment::with('state')->findOrFail($lgaId);
+        $user = User::findOrFail($userId);
+        $lga->update(['project_leader_id' => $user->id]);
+        $user->update([
+            'zone_id' => $lga->state->zone_id,
+            'zone_state_id' => $lga->zone_state_id,
+            'local_government_id' => $lga->id,
+        ]);
+        $user->assignRole('Project Leader');
+
+        session()->flash('message', "{$user->name} assigned as project leader for {$lga->name} LGA.");
+    }
+
+    private function validateAssignmentUser($userId): void
+    {
+        validator(['user_id' => $userId], [
+            'user_id' => 'required|exists:users,id',
+        ])->validate();
+    }
+
     public function render()
     {
         $search = trim($this->search);
@@ -220,7 +298,7 @@ class RegionalCommand extends Component
         return view('livewire.admin.regional-command', [
             'zones' => $zones,
             'allStates' => ZoneState::all(),
-            'staffUsers' => User::where('user_type', 'staff')->get(),
+            'staffUsers' => User::where('is_active', true)->orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }
