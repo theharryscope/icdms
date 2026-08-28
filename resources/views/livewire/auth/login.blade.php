@@ -45,7 +45,6 @@
 
                 <!-- Google reCAPTCHA Container -->
                 <div class="space-y-2 pt-2 border-t border-line">
-                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
                     <div wire:ignore class="flex justify-center">
                         <div class="g-recaptcha" data-sitekey="{{ config('captcha.sitekey') }}" data-theme="dark" data-callback="onLoginCaptchaSuccess"></div>
                     </div>
