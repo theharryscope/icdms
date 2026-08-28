@@ -14,6 +14,24 @@
             </div>
         @endif
 
+        <!-- Hierarchy Search -->
+        <div class="bg-surface border border-line rounded-2xl p-5">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+                <div class="flex-1">
+                    <label class="block text-[11px] font-bold text-ink-muted uppercase mb-1">Search Zone, State or LGA</label>
+                    <input type="search" wire:model.live.debounce.300ms="search" placeholder="e.g. Anambra, South-East, Awka" class="w-full bg-canvas border border-line rounded-lg px-3.5 py-2.5 text-[16px] sm:text-xs text-ink focus:outline-none focus:border-teal">
+                </div>
+                @if($search !== '')
+                    <button type="button" wire:click="clearSearch" class="px-4 py-2.5 bg-surface-raised hover:bg-line text-ink-muted rounded-lg text-xs font-bold transition">
+                        Clear Search
+                    </button>
+                @endif
+            </div>
+            @if($search !== '')
+                <p class="text-[11px] text-ink-muted mt-2">Showing command structures matching “{{ $search }}”.</p>
+            @endif
+        </div>
+
         <!-- Creation Forms Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
@@ -201,7 +219,7 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-xs text-ink-muted text-center py-8">No regional structures created yet.</p>
+                    <p class="text-xs text-ink-muted text-center py-8">{{ $search !== '' ? 'No zones, states, or LGAs matched your search.' : 'No regional structures created yet.' }}</p>
                 @endforelse
             </div>
         </div>

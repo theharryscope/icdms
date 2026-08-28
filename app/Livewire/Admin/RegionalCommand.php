@@ -23,6 +23,7 @@ class RegionalCommand extends Component
     // Form Inputs - LGA
     public $selected_state_id, $lga_name, $lga_coordinator_id, $project_leader_id;
     public $lga_import_file;
+    public string $search = '';
 
     protected $rules = [
         'zone_name' => 'required|string|max:255',
@@ -169,10 +170,55 @@ class RegionalCommand extends Component
         session()->flash('message', "LGA import complete: {$created} created, {$skipped} duplicate(s) skipped.");
     }
 
+    public function clearSearch(): void
+    {
+        $this->search = '';
+    }
+
     public function render()
     {
+        $search = trim($this->search);
+        $zonesQuery = Zone::with(['coordinator', 'states.coordinator', 'states.localGovernments.lgaCoordinator', 'states.localGovernments.projectLeader']);
+
+        if ($search !== '') {
+            $zonesQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhereHas('states', function ($stateQuery) use ($search) {
+                        $stateQuery->where('name', 'like', "%{$search}%")
+                            ->orWhereHas('localGovernments', function ($lgaQuery) use ($search) {
+                                $lgaQuery->where('name', 'like', "%{$search}%");
+                            });
+                    });
+            });
+        }
+
+        $zones = $zonesQuery->get();
+
+        if ($search !== '') {
+            $zones = $zones->map(function ($zone) use ($search) {
+                if (Str::contains(Str::lower($zone->name . ' ' . $zone->code), Str::lower($search))) {
+                    return $zone;
+                }
+
+                $zone->setRelation('states', $zone->states->filter(function ($state) use ($search) {
+                    if (Str::contains(Str::lower($state->name), Str::lower($search))) {
+                        return true;
+                    }
+
+                    $state->setRelation('localGovernments', $state->localGovernments->filter(
+                        fn ($lga) => Str::contains(Str::lower($lga->name), Str::lower($search))
+                    ));
+
+                    return $state->localGovernments->isNotEmpty();
+                })->values());
+
+                return $zone;
+            })->values();
+        }
+
         return view('livewire.admin.regional-command', [
-            'zones' => Zone::with(['coordinator', 'states.coordinator', 'states.localGovernments.lgaCoordinator', 'states.localGovernments.projectLeader'])->get(),
+            'zones' => $zones,
             'allStates' => ZoneState::all(),
             'staffUsers' => User::where('user_type', 'staff')->get(),
         ])->layout('layouts.app');
