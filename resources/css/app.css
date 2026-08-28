@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+[x-cloak] { display: none !important; }
+
+/* Allow dashboard cards and charts to shrink inside responsive grid tracks. */
+.dashboard-main .grid > * {
+    min-width: 0;
+}
+
+.dashboard-main canvas {
+    display: block;
+    max-width: 100%;
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* --- Public site "field dossier" palette ------------------------------
+       Grounded in InnoTech Future Foundation's real operating footprint:
+       laterite-red field roads of the Awka/Anambra corridor at dusk, an
+       operations-log dark canvas, and a parchment/case-file accent for
+       data readouts. Deliberately not the generic near-black+emerald or
+       cream+terracotta combinations. Additive tokens only — the admin
+       dashboard's existing slate/emerald palette is untouched. */
+    --color-canvas: #14120e;
+    --color-surface: #1e1a14;
+    --color-surface-raised: #262019;
+    --color-line: #35302a;
+    --color-ink: #f3eee3;
+    --color-ink-muted: #a79a85;
+    --color-ochre: #db8a2e;
+    --color-ochre-dim: #7a4a18;
+    --color-ochre-soft: #3a2a15;
+    --color-teal: #2f9e8f;
+    --color-teal-dim: #1b5850;
+    --color-teal-soft: #16302c;
+    --color-paper: #efe6d2;
+    --color-paper-dim: #cabf9f;
+
+    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-plex: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+}
+

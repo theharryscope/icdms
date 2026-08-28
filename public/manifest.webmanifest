@@ -1,0 +1,24 @@
+{
+    "name": "InnoTech Future Foundation ICDMS",
+    "short_name": "ICDMS",
+    "description": "Digital skills, regional command and verified community impact.",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#14120e",
+    "theme_color": "#14120e",
+    "icons": [
+        {
+            "src": "pwa-icon.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "pwa-icon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
