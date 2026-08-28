@@ -141,7 +141,6 @@
                 </div>
 
                 <div class="flex justify-center">
-                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
                     <div wire:ignore>
                         <div class="g-recaptcha" data-sitekey="{{ config('captcha.sitekey') }}" data-theme="dark" data-callback="onRegisterCaptchaSuccess"></div>
                     </div>
